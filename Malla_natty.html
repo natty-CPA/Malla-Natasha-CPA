@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla CPA USACH</title>
+  <style>
+    .ramo{ padding:6px; margin:4px; border:1px solid #333; display:inline-block; cursor:pointer; width:180px; text-align:center; }
+    .completado{ text-decoration: line-through; background:#c8e6c9; }
+    .desbloqueado{ border-color: green; }
+    .bloqueado{ opacity:0.4; pointer-events:none; }
+    .semestre{ margin-bottom:20px; }
+  </style>
+</head>
+<body>
+  <h1>Malla CPA USACH (10 semestres)</h1>
+  <div id="malla"></div>
+<script>
+  const malla = {
+    "Semestre I": ["herram","mat1","adm1","der1","eco1","medioProf","ing1"],
+    "Semestre II": ["contFund","mat2","adm2","der2","micro","electivoI","ing2"],
+    "Semestre III": ["proc1","mat3","planEstr","derTrib1","ing3","prog","electivoII"],
+    "Semestre IV": ["proc2","probEst","fundCost","derTrib2","baseDatos","cuegobRiesgo","ing4"],
+    "Semestre V": ["proc3","statInfer","costTomDec","derTrib3","digDatos","fundFin","fundAuditEtica"],
+    "Semestre VI": ["formEstCont","planif","presup","derTrib4","modelNeg","valEmpresa","apliSIC"],
+    "Semestre VII": ["contEspecial","audFin","investCont","juegoEmp","ctrlGest","auditInterna","ingTecI"],
+    "Semestre VIII": ["finCorp","gestSII","contGov","audInternaII","electivoIII","ingTecII"],
+    "Semestre IX": ["seminTitI","electivoIV","electivoV","electivoVI","pracProf","audIV","finIII"],
+    "Semestre X": ["seminTitII"]
+  };
+
+  const nombres = {
+    herram:"Herramientas Computacionales", mat1:"Matemáticas I", adm1:"Introducción a la Administración",
+    der1:"Derecho de Empresas I", eco1:"Introducción a la Economía", medioProf:"Introducción al Medio Profesional", ing1:"Inglés Básico I",
+    contFund:"Fundamentos de Contabilidad", mat2:"Matemáticas II", adm2:"Administración y Modelo de Gestión", der2:"Derecho de Empresas II",
+    micro:"Introducción a la Microeconomía", electivoI:"Electivo I", ing2:"Inglés Básico II",
+    proc1:"Procesos Contables I", mat3:"Matemáticas III", planEstr:"Planificación y Dirección Estratégica",
+    derTrib1:"Derecho Tributario I", ing3:"Inglés Básico III", prog:"Fundamentos de Programación", electivoII:"Electivo II",
+    proc2:"Procesos Contables II", probEst:"Probabilidad y Estadística", fundCost:"Fundamentos de Costos",
+    derTrib2:"Derecho Tributario II", baseDatos:"Base de Datos", cuegobRiesgo:"Control Interno, Gobernanza y Riesgo", ing4:"Inglés Básico IV",
+    proc3:"Procesos Contables III", statInfer:"Estadística Inferencial", costTomDec:"Costos para la Toma de Decisiones",
+    derTrib3:"Derecho Tributario III", digDatos:"Técnicas Informáticas de Extracción y Análisis de Datos",
+    fundFin:"Introducción a las Finanzas", fundAuditEtica:"Fundamentos de Auditoría y Ética",
+    formEstCont:"Formulación y Preparación de Estados Contables", planif:"Formulación, Evaluación y Valorización de Empresas",
+    presup:"Presupuestos", derTrib4:"Derecho Tributario IV", modelNeg:"Modelamiento de Procesos de Negocios",
+    valEmpresa:"Formulación, Evaluación y Valorización de Empresas", apliSIC:"Aplicación de Sistemas de Información Contables",
+    contEspecial:"Contabilidad Especial", audFin:"Auditoría Financiera", investCont:"Investigación Contable",
+    juegoEmp:"Juego de Empresas", ctrlGest:"Control de Gestión", auditInterna:"Auditoría Interna", ingTecI:"Inglés Técnico I",
+    finCorp:"Finanzas Corporativas", gestSII:"Gestión y Auditoría de Sistemas de Información",
+    contGov:"Contabilidad Gubernamental", audInternaII:"Auditoría Interna II", electivoIII:"Electivo III", ingTecII:"Inglés Técnico II",
+    seminTitI:"Seminario de Titulación I", electivoIV:"Electivo IV", electivoV:"Electivo V", electivoVI:"Electivo VI",
+    pracProf:"Práctica Profesional", audIV:"Auditoría IV", finIII:"Finanzas III", seminTitII:"Seminario de Titulación II"
+  };
+
+  const prerrequisitos = {
+    contFund:["herram","mat1"],
+    mat2:["mat1"], adm2:["adm1"], der2:["der1"], micro:["eco1"],
+    proc1:["contFund"], mat3:["mat2"], planEstr:["adm2"], derTrib1:["der2"],
+    prog:["herram"], proc2:["proc1"], probEst:["mat3"], fundCost:["proc2"],
+    derTrib2:["derTrib1"], baseDatos:["prog"], cuegobRiesgo:["prog"],
+    statInfer:["probEst"], costTomDec:["fundCost"], derTrib3:["derTrib2"],
+    digDatos:["baseDatos"], fundFin:["fundCost"], fundAuditEtica:["cuegobRiesgo"],
+    proc3:["proc2"], formEstCont:["proc3"], planif:["fundFin"], presup:["fundFin"],
+    derTrib4:["derTrib3"], modelNeg:["digDatos"], valEmpresa:["planif"],
+    apliSIC:["valEmpresa"], contEspecial:["formEstCont"], audFin:["contEspecial"],
+    investCont:["audFin"], juegoEmp:[], ctrlGest:["planEstr"], auditInterna:["ctrlGest"],
+    finCorp:["fundFin"], gestSII:["digDatos"], contGov:["contEspecial"], audInternaII:["auditInterna"],
+    seminTitI:["audFin"], pracProf:["seminTitI"], audIV:["auditInternaII"], finIII:["finCorp"],
+    seminTitII:["seminTitI"]
+  };
+
+  const estado = JSON.parse(localStorage.getItem("estadoMalla"))||{};
+  function guardar(){localStorage.setItem("estadoMalla",JSON.stringify(estado));}
+  function completar(id){estado[id]=true;guardar();render();}
+  function render(){
+    const cont=document.getElementById("malla");cont.innerHTML="";
+    for(const sem in malla){
+      const ds=document.createElement("div");ds.className="semestre";
+      ds.innerHTML=<h3>${sem}</h3>;
+      malla[sem].forEach(id=>{
+        const d=document.createElement("div");d.id=id;d.className="ramo";
+        d.textContent=nombres[id]||id;
+        if(estado[id]) d.classList.add("completado");
+        const puede = (prerrequisitos[id]||[]).every(r=>estado[r]);
+        if(puede){
+          if(!estado[id]) d.classList.add("desbloqueado");
+          d.onclick=()=>completar(id);
+        } else d.classList.add("bloqueado");
+        ds.appendChild(d);
+      });
+      cont.appendChild(ds);
+    }
+  }
+  render();
+</script>
+</body></html>
